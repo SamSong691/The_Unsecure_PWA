@@ -7,7 +7,7 @@ import user_management as dbHandler
 # Code snippet for logging a message
 # app.logger.critical("message")
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 
 
 @app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
@@ -58,6 +58,17 @@ def home():
     else:
         return render_template("/index.html")
 
+@app.route("/music", methods=["POST", "GET"])
+def musicIndex():
+    # songId=35
+    # songImageFile="/static/images/music/12345.webp"
+    # songName="Song1"
+    # return render_template("/music/index.html", song_id=songId, song_image_file=songImageFile, song_name=songName)
+    musicDict=[
+        dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
+        dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
+    ]
+    return render_template("/music/index.html", music=musicDict)
 
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True

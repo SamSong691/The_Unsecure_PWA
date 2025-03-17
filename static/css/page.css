@@ -1,0 +1,25 @@
+.container .list img {
+  width: 100px;
+}
+.container .list .item {
+  width: 500px;
+}
+.item-left {
+  text-align: left;
+}
+.item-right {
+  float: left;
+  margin-left: 30px;
+}
+
+.leftfix {
+  float: left;
+}
+.rightfix {
+  float: right;
+}
+.clearfix {
+  content: "";
+  display: block;
+  clear: both;
+}

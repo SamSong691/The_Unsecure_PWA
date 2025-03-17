@@ -1,0 +1,50 @@
+{% extends 'layout.html' %} {% block content %}
+<h1>Music List</h1>
+<div class="header">
+  <div class="banner"></div>
+</div>
+<div class="container">
+  <div class="list">
+    <!-- {% for item in music %}
+    <div class="item clearfix">
+      <div class="item-left leftfix">
+        <img src="{{ item.song_image_file }}" alt="icon" />
+      </div>
+      <div class="item-right">
+        <ul>
+          <li>ID: {{ item.song_id }}</li>
+          <li><a href="/music/{{ item.song_id }}"></a>{{ item.song_name }}</li>
+          <li>Artist</li>
+        </ul>
+      </div>
+    </div>
+    {% endfor %} -->
+
+    <!-- <div class="item">
+      <span>ID: {{ song_id }}</span>
+      <img src="{{ song_image_file }}" alt="icon" />
+      <span><a href="/music/{{ song_id }}"></a>{{ song_name }}</span>
+      <span>Artist</span>
+    </div> -->
+
+    <table>
+      <thead>
+        <tr>
+          <td style="width: 100px">Image</td>
+          <td style="width: 50px">ID</td>
+          <td style="width: 100px">Song</td>
+          <td style="width: 100px">Artist</td>
+        </tr>
+      </thead>
+      {% for item in music %}
+      <tr>
+        <td><img src="{{ item.song_image_file }}" alt="icon" /></td>
+        <td>{{ item.song_id }}</td>
+        <td><a href="/music/{{ item.song_id }}">{{ item.song_name }}</a></td>
+        <td>Artist</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}
