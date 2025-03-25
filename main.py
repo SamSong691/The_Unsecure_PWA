@@ -2,7 +2,8 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
-import user_management as dbHandler
+import user_management as dbUserHandler
+import music_management as dbMusicHandler
 
 # Code snippet for logging a message
 # app.logger.critical("message")
@@ -17,11 +18,11 @@ def addFeedback():
         return redirect(url, code=302)
     if request.method == "POST":
         feedback = request.form["feedback"]
-        dbHandler.insertFeedback(feedback)
-        dbHandler.listFeedback()
+        dbUserHandler.insertFeedback(feedback)
+        dbUserHandler.listFeedback()
         return render_template("/success.html", state=True, value="Back")
     else:
-        dbHandler.listFeedback()
+        dbUserHandler.listFeedback()
         return render_template("/success.html", state=True, value="Back")
 
 
@@ -34,7 +35,7 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         DoB = request.form["dob"]
-        dbHandler.insertUser(username, password, DoB)
+        dbUserHandler.insertUser(username, password, DoB)
         return render_template("/index.html")
     else:
         return render_template("/signup.html")
@@ -49,9 +50,9 @@ def home():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        isLoggedIn = dbHandler.retrieveUsers(username, password)
+        isLoggedIn = dbUserHandler.retrieveUsers(username, password)
         if isLoggedIn:
-            dbHandler.listFeedback()
+            dbUserHandler.listFeedback()
             return render_template("/success.html", value=username, state=isLoggedIn)
         else:
             return render_template("/index.html")
@@ -67,11 +68,12 @@ def musicIndex():
     # songImageFile="/static/images/music/12345.webp"
     # songName="Song1"
     # return render_template("/music/index.html", song_id=songId, song_image_file=songImageFile, song_name=songName)
-    musicDict=[
-        dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
-        dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
-    ]
-    return render_template("/music/index.html", music=musicDict)
+    # musicDict=[
+    #     dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
+    #     dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
+    # ]
+    musicItems =dbMusicHandler.listAll()
+    return render_template("/music.html", music=musicItems)
 
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True

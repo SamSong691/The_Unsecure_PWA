@@ -12,6 +12,27 @@
   margin-left: 30px;
 }
 
+.header span {
+  color: red;
+  font-weight: bolder;
+}
+.song_search {
+  height: 50px;
+  line-height: 50px;
+}
+.song_search img {
+  width: 30px;
+  margin-top: 3px;
+}
+.song_search input[type="text"] {
+  width: 40vw;
+  margin-left: 5px;
+}
+.song_search input[type="submit"] {
+  margin-left: 5px;
+  margin-top: 3px;
+}
+
 .leftfix {
   float: left;
 }

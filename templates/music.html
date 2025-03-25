@@ -1,4 +1,11 @@
 {% extends 'layout.html' %} {% block content %}
+<div class="song_search clearfix">
+  <form action="/search.html" method="post">
+    <img class="leftfix" src="/static/images/search.png" alt="" />
+    <input class="leftfix input__field" type="text" name="search_key" />
+    <input class="leftfix btn" type="submit" value="Search" />
+  </form>
+</div>
 <h1>Music List</h1>
 <div class="header">
   <div class="banner"></div>
@@ -34,19 +41,21 @@
           <td style="width: 50px">ID</td>
           <td style="width: 100px">Song</td>
           <td style="width: 100px">Artist</td>
+          <td style="width: 100px">Category</td>
         </tr>
       </thead>
       {% for item in music %}
       <tr>
         <td>
           <img
-            src="/static/images/music/{{ item.song_image_file }}"
+            src="/static/images/music/{{ item.song_image_filename }}"
             alt="icon"
           />
         </td>
         <td>{{ item.id }}</td>
         <td>{{ item.song_name }}</td>
         <td>{{ item.artist }}</td>
+        <td>{{ item.category }}</td>
       </tr>
       {% endfor %}
     </table>
