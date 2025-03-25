@@ -38,10 +38,15 @@
       </thead>
       {% for item in music %}
       <tr>
-        <td><img src="{{ item.song_image_file }}" alt="icon" /></td>
-        <td>{{ item.song_id }}</td>
-        <td><a href="/music/{{ item.song_id }}">{{ item.song_name }}</a></td>
-        <td>Artist</td>
+        <td>
+          <img
+            src="/static/images/music/{{ item.song_image_file }}"
+            alt="icon"
+          />
+        </td>
+        <td>{{ item.id }}</td>
+        <td>{{ item.song_name }}</td>
+        <td>{{ item.artist }}</td>
       </tr>
       {% endfor %}
     </table>

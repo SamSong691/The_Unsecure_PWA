@@ -58,8 +58,11 @@ def home():
     else:
         return render_template("/index.html")
 
-@app.route("/music", methods=["POST", "GET"])
+@app.route("/music.html", methods=["POST", "GET"])
 def musicIndex():
+    if request.method == "GET" and request.args.get("url"):
+        url = request.args.get("url", "")
+        return redirect(url, code=302)
     # songId=35
     # songImageFile="/static/images/music/12345.webp"
     # songName="Song1"
@@ -73,4 +76,4 @@ def musicIndex():
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5100)
