@@ -75,6 +75,22 @@ def musicIndex():
     musicItems =dbMusicHandler.listAll()
     return render_template("/music.html", music=musicItems)
 
+@app.route("/search.html", methods=["POST", "GET"])
+def musicSearch():
+    print("request.method="+request.method)
+    if request.method == "GET" and request.args.get("url"):
+        url = request.args.get("url", "")
+        return redirect(url, code=302)
+    if request.method == "POST":
+        searchKey = request.form["search_key"]
+        print("searchKey="+searchKey)
+        musicItems=dbMusicHandler.search(searchKey)
+        print("musicItems=")
+        print(musicItems)
+        return render_template("/search.html", search_key=searchKey, music=musicItems)
+    else:
+        return render_template("/search.html")
+
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
