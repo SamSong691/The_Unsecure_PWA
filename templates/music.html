@@ -34,14 +34,16 @@
       <span>Artist</span>
     </div> -->
 
-    <table>
+    <table class="music_list">
       <thead>
         <tr>
-          <td style="width: 100px">Image</td>
-          <td style="width: 50px">ID</td>
-          <td style="width: 100px">Song</td>
-          <td style="width: 100px">Artist</td>
-          <td style="width: 100px">Category</td>
+          <td>Image</td>
+          <td>ID</td>
+          <td>Title</td>
+          <td>Artist</td>
+          <td>Album</td>
+          <td>Duration</td>
+          <td>Genre</td>
         </tr>
       </thead>
       {% for item in music %}
@@ -53,9 +55,11 @@
           />
         </td>
         <td>{{ item.id }}</td>
-        <td>{{ item.song_name }}</td>
+        <td>{{ item.title }}</td>
         <td>{{ item.artist }}</td>
-        <td>{{ item.category }}</td>
+        <td>{{ item.album }}</td>
+        <td>{{ item.duration }}</td>
+        <td>{{ item.genre }}</td>
       </tr>
       {% endfor %}
     </table>

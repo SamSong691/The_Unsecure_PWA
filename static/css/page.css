@@ -11,7 +11,9 @@
   float: left;
   margin-left: 30px;
 }
-
+.header .info {
+  text-align: left;
+}
 .header span {
   color: red;
   font-weight: bolder;
@@ -31,6 +33,33 @@
 .song_search input[type="submit"] {
   margin-left: 5px;
   margin-top: 3px;
+}
+thead {
+  font-weight: bolder;
+}
+.music_list tr td:first-child {
+  width: 80px;
+}
+.music_list tr td:first-child img {
+  width: 100%;
+}
+.music_list tr td:nth-child(2) {
+  width: 50px;
+}
+.music_list tr td:nth-child(3) {
+  width: 180px;
+}
+.music_list tr td:nth-child(4) {
+  width: 180px;
+}
+.music_list tr td:nth-child(5) {
+  width: 180px;
+}
+.music_list tr td:nth-child(6) {
+  width: 80px;
+}
+.music_list tr td:nth-child(7) {
+  width: 100px;
 }
 
 .leftfix {
