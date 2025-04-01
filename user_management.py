@@ -22,7 +22,9 @@ def retrieveUsers(username, password):
         con.close()
         return False
     else:
-        cur.execute(f"SELECT * FROM users WHERE password = '{password}'")
+        cur.execute(
+            f"SELECT * FROM users WHERE username = '{username}' and password = '{password}'"
+        )
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
             number = int(file.read().strip())
@@ -31,12 +33,22 @@ def retrieveUsers(username, password):
             file.write(str(number))
         # Simulate response time of heavy app for testing purposes
         time.sleep(random.randint(80, 90) / 1000)
-        if cur.fetchone() == None:
+        row = cur.fetchone()
+        if row == None:
             con.close()
             return False
         else:
+            username = row[1]
             con.close()
-            return True
+            return username
+
+
+def doLogin(resp, username):
+    resp.set_cookie("username", username)
+
+
+def doLogout(resp):
+    resp.set_cookie("username", "", expires=0)
 
 
 def insertFeedback(feedback):

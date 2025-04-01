@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
+from flask import make_response
 import user_management as dbUserHandler
 import music_management as dbMusicHandler
 
@@ -42,6 +43,13 @@ def signup():
         return render_template("/signup.html.j2")
 
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    resp = make_response(render_template("logout.html.j2"))
+    dbUserHandler.doLogout(resp)
+    return resp
+
+
 # @app.route("/index.html.j2", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 @app.route("/", methods=["POST", "GET"])
 def home():
@@ -54,11 +62,20 @@ def home():
         isLoggedIn = dbUserHandler.retrieveUsers(username, password)
         if isLoggedIn:
             dbUserHandler.listFeedback()
-            return render_template("/success.html", value=username, state=isLoggedIn)
+
+            resp = make_response(
+                render_template("success.html", value=username, state=True)
+            )
+            dbUserHandler.doLogin(resp, isLoggedIn)
+            return resp
         else:
             return render_template("/index.html.j2")
     else:
-        return render_template("/index.html.j2")
+        username = request.cookies.get("username")
+        if username:
+            return render_template("success.html", value=username, state=True)
+        else:
+            return render_template("/index.html.j2")
 
 
 @app.route("/music", methods=["POST", "GET"])
@@ -75,26 +92,27 @@ def musicIndex():
     #     dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
     # ]
     musicItems = dbMusicHandler.listAll()
-    return render_template("/music.html", music=musicItems)
+    return render_template(
+        "/music.html.j2", music=musicItems, state=request.cookies.get("username")
+    )
 
 
 @app.route("/search", methods=["POST", "GET"])
 def musicSearch():
-    print("request.method=" + request.method)
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
     if request.method == "POST":
         searchKey = request.form["search_key"]
-        print("searchKey=" + searchKey)
         musicItems = dbMusicHandler.search(searchKey)
-        print("musicItems=")
-        print(musicItems)
         return render_template(
-            "/search.html.j2", search_key=searchKey, music=musicItems
+            "/search.html.j2",
+            search_key=searchKey,
+            music=musicItems,
+            state=request.cookies.get("username"),
         )
     else:
-        return render_template("/search.html.j2")
+        return render_template("/search.html.j2", state=request.cookies.get("username"))
 
 
 if __name__ == "__main__":
