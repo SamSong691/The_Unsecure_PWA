@@ -26,7 +26,7 @@ def addFeedback():
         return render_template("/success.html", state=True, value="Back")
 
 
-@app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/signup", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def signup():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -35,13 +35,14 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         DoB = request.form["dob"]
-        dbUserHandler.insertUser(username, password, DoB)
-        return render_template("/index.html")
+        email = request.form["email"]
+        dbUserHandler.insertUser(username, password, DoB, email)
+        return render_template("/index.html.j2")
     else:
-        return render_template("/signup.html")
+        return render_template("/signup.html.j2")
 
 
-@app.route("/index.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+# @app.route("/index.html.j2", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "GET" and request.args.get("url"):
@@ -55,11 +56,12 @@ def home():
             dbUserHandler.listFeedback()
             return render_template("/success.html", value=username, state=isLoggedIn)
         else:
-            return render_template("/index.html")
+            return render_template("/index.html.j2")
     else:
-        return render_template("/index.html")
+        return render_template("/index.html.j2")
 
-@app.route("/music.html", methods=["POST", "GET"])
+
+@app.route("/music", methods=["POST", "GET"])
 def musicIndex():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -72,24 +74,28 @@ def musicIndex():
     #     dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
     #     dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
     # ]
-    musicItems =dbMusicHandler.listAll()
+    musicItems = dbMusicHandler.listAll()
     return render_template("/music.html", music=musicItems)
 
-@app.route("/search.html", methods=["POST", "GET"])
+
+@app.route("/search", methods=["POST", "GET"])
 def musicSearch():
-    print("request.method="+request.method)
+    print("request.method=" + request.method)
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
     if request.method == "POST":
         searchKey = request.form["search_key"]
-        print("searchKey="+searchKey)
-        musicItems=dbMusicHandler.search(searchKey)
+        print("searchKey=" + searchKey)
+        musicItems = dbMusicHandler.search(searchKey)
         print("musicItems=")
         print(musicItems)
-        return render_template("/search.html", search_key=searchKey, music=musicItems)
+        return render_template(
+            "/search.html.j2", search_key=searchKey, music=musicItems
+        )
     else:
-        return render_template("/search.html")
+        return render_template("/search.html.j2")
+
 
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
