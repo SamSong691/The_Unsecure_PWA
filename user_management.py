@@ -70,3 +70,69 @@ def listFeedback():
         f.write(f"{row[1]}\n")
         f.write("</p>\n")
     f.close()
+
+
+def musicAction(username, title, action):
+    con = sql.connect("database_files/database.db")
+    cur = con.cursor()
+    cur.execute(f"SELECT likedSongs,playList FROM users WHERE username = '{username}'")
+    row = cur.fetchone()
+    if row == None:
+        con.close()
+        return False
+    else:
+        likedSongs = []
+        playList = []
+
+        if row[0] and len(row[0]) > 0:
+            likedSongs = row[0].split("\n")
+        if row[1] and len(row[1]) > 0:
+            playList = row[1].split("\n")
+
+        if action == "addLike":
+            if title not in likedSongs:
+                likedSongs.append(title)
+                cur.execute(
+                    "update users set likedSongs=? where username=?",
+                    ("\n".join(likedSongs), username),
+                )
+                con.commit()
+                con.close()
+            return True
+        elif action == "removeLike":
+            if title in likedSongs:
+                likedSongs.remove(title)
+                cur.execute(
+                    "update users set likedSongs=? where username=?",
+                    ("\n".join(likedSongs), username),
+                )
+                con.commit()
+                con.close()
+            return True
+        elif action == "addList":
+            if title not in playList:
+                playList.append(title)
+                cur.execute(
+                    "update users set playList=? where username=?",
+                    ("\n".join(playList), username),
+                )
+                con.commit()
+                con.close()
+            return True
+        elif action == "removeList":
+            if title in playList:
+                playList.remove(title)
+                cur.execute(
+                    "update users set playList=? where username=?",
+                    ("\n".join(playList), username),
+                )
+                con.commit()
+                con.close()
+            return True
+        else:
+            return False
+
+    # data = cur.execute("SELECT * FROM feedback").fetchall()
+    # addLike, addList
+    # document.getElementById("formTitle").setAttribute("value", title)
+    # document.getElementById("formAction").setAttribute("value", "removeLike")

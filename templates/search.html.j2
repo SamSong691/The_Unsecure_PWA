@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html.j2' %}
 {% block content %}
 <div class="song_search clearfix">
   <form action="/search" method="post">
@@ -47,6 +47,7 @@
           <td>Album</td>
           <td>Duration</td>
           <td>Genre</td>
+          <td>Action</td>
         </tr>
       </thead>
       {% for item in music %}
@@ -63,6 +64,12 @@
         <td>{{ item.album }}</td>
         <td>{{ item.duration }}</td>
         <td>{{ item.genre }}</td>
+        <td>
+        {% if state %}
+        <img src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}" />
+        <img src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}" />
+        {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </table>

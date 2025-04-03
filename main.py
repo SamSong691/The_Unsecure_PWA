@@ -12,7 +12,7 @@ import music_management as dbMusicHandler
 app = Flask(__name__, static_url_path="/static")
 
 
-@app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/success.html.j2", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def addFeedback():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -21,10 +21,10 @@ def addFeedback():
         feedback = request.form["feedback"]
         dbUserHandler.insertFeedback(feedback)
         dbUserHandler.listFeedback()
-        return render_template("/success.html", state=True, value="Back")
+        return render_template("/success.html.j2", state=True, value="Back")
     else:
         dbUserHandler.listFeedback()
-        return render_template("/success.html", state=True, value="Back")
+        return render_template("/success.html.j2", state=True, value="Back")
 
 
 @app.route("/signup", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
@@ -64,7 +64,7 @@ def home():
             dbUserHandler.listFeedback()
 
             resp = make_response(
-                render_template("success.html", value=username, state=True)
+                render_template("success.html.j2", value=username, state=True)
             )
             dbUserHandler.doLogin(resp, isLoggedIn)
             return resp
@@ -73,7 +73,7 @@ def home():
     else:
         username = request.cookies.get("username")
         if username:
-            return render_template("success.html", value=username, state=True)
+            return render_template("success.html.j2", value=username, state=True)
         else:
             return render_template("/index.html.j2")
 
@@ -83,6 +83,8 @@ def musicIndex():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
+
+    username = request.cookies.get("username")
     # songId=35
     # songImageFile="/static/images/music/12345.webp"
     # songName="Song1"
@@ -91,10 +93,35 @@ def musicIndex():
     #     dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
     #     dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
     # ]
-    musicItems = dbMusicHandler.listAll()
-    return render_template(
-        "/music.html.j2", music=musicItems, state=request.cookies.get("username")
-    )
+    musicItems = dbMusicHandler.listAll(username)
+    return render_template("/music.html.j2", music=musicItems, state=username)
+
+
+@app.route("/music-action", methods=["POST", "GET"])
+def musicAction():
+    if request.method == "GET" and request.args.get("url"):
+        url = request.args.get("url", "")
+        return redirect(url, code=302)
+
+    username = request.cookies.get("username")
+    msg = ""
+    if username:
+        title = request.form["title"]
+        action = request.form["action"]
+        result = dbUserHandler.musicAction(username, title, action)
+
+        if action == "addLike":
+            msg += title + " like " + ("success!" if result else "fail!")
+        elif action == "removeLike":
+            msg += title + " unlike " + ("success!" if result else "fail!")
+        elif action == "addList":
+            msg += title + " add into list " + ("success!" if result else "fail!")
+        elif action == "removeList":
+            msg += title + " remove from list " + ("success!" if result else "fail!")
+        else:
+            msg += title + " can not execute " + action
+
+    return render_template("/music-action.html.j2", state=username, msg=msg)
 
 
 @app.route("/search", methods=["POST", "GET"])
@@ -102,17 +129,20 @@ def musicSearch():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
+
+    username = request.cookies.get("username")
+
     if request.method == "POST":
         searchKey = request.form["search_key"]
-        musicItems = dbMusicHandler.search(searchKey)
+        musicItems = dbMusicHandler.search(username, searchKey)
         return render_template(
             "/search.html.j2",
             search_key=searchKey,
             music=musicItems,
-            state=request.cookies.get("username"),
+            state=username,
         )
     else:
-        return render_template("/search.html.j2", state=request.cookies.get("username"))
+        return render_template("/search.html.j2", state=username)
 
 
 if __name__ == "__main__":
