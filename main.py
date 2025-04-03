@@ -12,7 +12,7 @@ import music_management as dbMusicHandler
 app = Flask(__name__, static_url_path="/static")
 
 
-@app.route("/success.html.j2", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def addFeedback():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
