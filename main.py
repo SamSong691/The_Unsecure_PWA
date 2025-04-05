@@ -27,7 +27,7 @@ def addFeedback():
         return render_template("/success.html.j2", state=True, value="Back")
 
 
-@app.route("/signup", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def signup():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -43,14 +43,14 @@ def signup():
         return render_template("/signup.html.j2")
 
 
-@app.route("/logout", methods=["GET"])
+@app.route("/logout.html", methods=["GET"])
 def logout():
     resp = make_response(render_template("logout.html.j2"))
     dbUserHandler.doLogout(resp)
     return resp
 
 
-# @app.route("/index.html.j2", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/index.html", methods=["POST", "GET"])
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "GET" and request.args.get("url"):
@@ -78,26 +78,18 @@ def home():
             return render_template("/index.html.j2")
 
 
-@app.route("/music", methods=["POST", "GET"])
+@app.route("/music.html", methods=["POST", "GET"])
 def musicIndex():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
     username = request.cookies.get("username")
-    # songId=35
-    # songImageFile="/static/images/music/12345.webp"
-    # songName="Song1"
-    # return render_template("/music/index.html", song_id=songId, song_image_file=songImageFile, song_name=songName)
-    # musicDict=[
-    #     dict(song_id=35, song_image_file="/static/images/music/12345.webp", song_name="Song1"),
-    #     dict(song_id=36, song_image_file="/static/images/music/12345.webp", song_name="Song2")
-    # ]
     musicItems = dbMusicHandler.listAll(username)
     return render_template("/music.html.j2", music=musicItems, state=username)
 
 
-@app.route("/music-action", methods=["POST", "GET"])
+@app.route("/music-action.html", methods=["POST", "GET"])
 def musicAction():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -111,20 +103,27 @@ def musicAction():
         result = dbUserHandler.musicAction(username, title, action)
 
         if action == "addLike":
-            msg += title + " like " + ("success!" if result else "fail!")
+            msg += "[" + title + "] like " + ("success!" if result else "fail!")
         elif action == "removeLike":
-            msg += title + " unlike " + ("success!" if result else "fail!")
+            msg += "[" + title + "] unlike " + ("success!" if result else "fail!")
         elif action == "addList":
-            msg += title + " add into list " + ("success!" if result else "fail!")
+            msg += (
+                "[" + title + "] add into list " + ("success!" if result else "fail!")
+            )
         elif action == "removeList":
-            msg += title + " remove from list " + ("success!" if result else "fail!")
+            msg += (
+                "["
+                + title
+                + "] remove from list "
+                + ("success!" if result else "fail!")
+            )
         else:
-            msg += title + " can not execute " + action
+            msg += "[" + title + "] can not execute " + action
 
     return render_template("/music-action.html.j2", state=username, msg=msg)
 
 
-@app.route("/search", methods=["POST", "GET"])
+@app.route("/search.html", methods=["POST", "GET"])
 def musicSearch():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")

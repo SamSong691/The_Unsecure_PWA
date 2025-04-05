@@ -1,7 +1,7 @@
 {% extends 'layout.html.j2' %}
 {% block content %}
 <div class="song_search clearfix">
-  <form action="/search" method="post">
+  <form action="/search.html" method="post">
     <img class="leftfix" src="/static/images/search.png" alt="" />
     <input class="leftfix input__field" type="text" name="search_key" />
     <input class="leftfix btn" type="submit" value="Search" />
@@ -14,27 +14,6 @@
 <div class="container">
   <div class="banner"></div>
   <div class="list">
-    <!-- {% for item in music %}
-    <div class="item clearfix">
-      <div class="item-left leftfix">
-        <img src="{{ item.song_image_file }}" alt="icon" />
-      </div>
-      <div class="item-right">
-        <ul>
-          <li>ID: {{ item.song_id }}</li>
-          <li><a href="/music/{{ item.song_id }}"></a>{{ item.song_name }}</li>
-          <li>Artist</li>
-        </ul>
-      </div>
-    </div>
-    {% endfor %} -->
-
-    <!-- <div class="item">
-      <span>ID: {{ song_id }}</span>
-      <img src="{{ song_image_file }}" alt="icon" />
-      <span><a href="/music/{{ song_id }}"></a>{{ song_name }}</span>
-      <span>Artist</span>
-    </div> -->
     <table class="music_list">
       <thead>
         <tr>
@@ -45,11 +24,11 @@
           <td>Album</td>
           <td>Duration</td>
           <td>Genre</td>
-          <td>Action</td>
+          {% if state %}<td>Action</td>{% endif %}
         </tr>
       </thead>
       {% if state %}
-      <form action="/music/new">
+      <form action="/music-new.html">
         <tr class="music_new">
           <td>
             <input type="file" name="image" style="width: 80px" />
@@ -79,7 +58,7 @@
           </td>
         </tr>
       </form>
-      <form id="musicActionForm" action="/music-action" method="post">
+      <form id="musicActionForm" action="/music-action.html" method="post">
       <input type="hidden" id="formTitle" name="title" value=""/>
       <input type="hidden" id="formAction" name="action" value=""/>
       </form>
@@ -98,8 +77,8 @@
         <td>{{ item.album }}</td>
         <td>{{ item.duration }}</td>
         <td>{{ item.genre }}</td>
+        {% if state %}
         <td>
-          {% if state %}
           <img
             src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}"
             onclick="{% if item.isLiked %}removeLike('{{ item.title }}');{% else %}addLike('{{ item.title }}');{% endif %}"
@@ -108,8 +87,8 @@
             src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}"
             onclick="{% if item.inPlayList %}removeList('{{ item.title }}');{% else %}addList('{{ item.title }}');{% endif %}"
           />
-          {% endif %}
         </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </table>

@@ -1,7 +1,7 @@
 {% extends 'layout.html.j2' %}
 {% block content %}
 <div class="song_search clearfix">
-  <form action="/search" method="post">
+  <form action="/search.html" method="post">
     <img class="leftfix" src="/static/images/search.png" alt="" />
     <input class="leftfix input__field" type="text" name="search_key" />
     <input class="leftfix btn" type="submit" value="Search" />
@@ -15,28 +15,6 @@
 </div>
 <div class="container">
   <div class="list">
-    <!-- {% for item in music %}
-    <div class="item clearfix">
-      <div class="item-left leftfix">
-        <img src="{{ item.song_image_file }}" alt="icon" />
-      </div>
-      <div class="item-right">
-        <ul>
-          <li>ID: {{ item.song_id }}</li>
-          <li><a href="/music/{{ item.song_id }}"></a>{{ item.song_name }}</li>
-          <li>Artist</li>
-        </ul>
-      </div>
-    </div>
-    {% endfor %} -->
-
-    <!-- <div class="item">
-      <span>ID: {{ song_id }}</span>
-      <img src="{{ song_image_file }}" alt="icon" />
-      <span><a href="/music/{{ song_id }}"></a>{{ song_name }}</span>
-      <span>Artist</span>
-    </div> -->
-
     <table class="music_list">
       <thead>
         <tr>
@@ -47,16 +25,13 @@
           <td>Album</td>
           <td>Duration</td>
           <td>Genre</td>
-          <td>Action</td>
+          {% if state %}<td>Action</td>{% endif %}
         </tr>
       </thead>
       {% for item in music %}
       <tr>
         <td>
-          <img
-            src="/static/images/music/{{ item.song_image_filename }}"
-            alt="icon"
-          />
+          <img src="/static/images/music/{{ item.song_image_filename }}" alt="icon" />
         </td>
         <td>{{ item.id }}</td>
         <td>{{ item.title }}</td>
@@ -64,12 +39,12 @@
         <td>{{ item.album }}</td>
         <td>{{ item.duration }}</td>
         <td>{{ item.genre }}</td>
-        <td>
         {% if state %}
-        <img src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}" />
-        <img src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}" />
-        {% endif %}
+        <td>
+          <img src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}" />
+          <img src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}" />
         </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </table>
