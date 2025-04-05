@@ -24,10 +24,10 @@
           <td>Album</td>
           <td>Duration</td>
           <td>Genre</td>
-          {% if state %}<td>Action</td>{% endif %}
+          {% if loginState %}<td>Action</td>{% endif %}
         </tr>
       </thead>
-      {% if state %}
+      {% if loginState %}
       <form action="/music-new.html">
         <tr class="music_new">
           <td>
@@ -77,7 +77,7 @@
         <td>{{ item.album }}</td>
         <td>{{ item.duration }}</td>
         <td>{{ item.genre }}</td>
-        {% if state %}
+        {% if loginState %}
         <td>
           <img
             src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}"

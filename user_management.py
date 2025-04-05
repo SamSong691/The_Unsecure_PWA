@@ -136,3 +136,34 @@ def musicAction(username, title, action):
     # addLike, addList
     # document.getElementById("formTitle").setAttribute("value", title)
     # document.getElementById("formAction").setAttribute("value", "removeLike")
+
+
+def getUserProfile(username):
+    if not username:
+        return False
+    con = sql.connect("database_files/database.db")
+    cur = con.cursor()
+    cur.execute(
+        f"SELECT username,numOfComments,likedSongs,playList FROM users WHERE username = '{username}'"
+    )
+    row = cur.fetchone()
+    if row == None:
+        con.close()
+        return False
+    else:
+        username = row[0]
+        numOfComments = row[1]
+        likedSongs = []
+        playList = []
+        if row[2] and len(row[2]) > 0:
+            likedSongs = row[2].split("\n")
+        if row[3] and len(row[3]) > 0:
+            playList = row[3].split("\n")
+
+        con.close()
+        return dict(
+            username=username,
+            numOfComments=numOfComments,
+            likedSongs=likedSongs,
+            playList=playList,
+        )

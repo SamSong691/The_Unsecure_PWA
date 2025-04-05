@@ -12,19 +12,26 @@ import music_management as dbMusicHandler
 app = Flask(__name__, static_url_path="/static")
 
 
-@app.route("/success.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/profile.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def addFeedback():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
+
+    username = request.cookies.get("username")
+    userProfile = dbUserHandler.getUserProfile(username)
     if request.method == "POST":
         feedback = request.form["feedback"]
         dbUserHandler.insertFeedback(feedback)
         dbUserHandler.listFeedback()
-        return render_template("/success.html.j2", state=True, value="Back")
+        return render_template(
+            "/profile.html.j2", loginState=username, userProfile=userProfile
+        )
     else:
         dbUserHandler.listFeedback()
-        return render_template("/success.html.j2", state=True, value="Back")
+        return render_template(
+            "/profile.html.j2", loginState=username, userProfile=userProfile
+        )
 
 
 @app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
@@ -61,10 +68,13 @@ def home():
         password = request.form["password"]
         isLoggedIn = dbUserHandler.retrieveUsers(username, password)
         if isLoggedIn:
+            userProfile = dbUserHandler.getUserProfile(username)
             dbUserHandler.listFeedback()
 
             resp = make_response(
-                render_template("success.html.j2", value=username, state=True)
+                render_template(
+                    "profile.html.j2", loginState=isLoggedIn, userProfile=userProfile
+                )
             )
             dbUserHandler.doLogin(resp, isLoggedIn)
             return resp
@@ -73,7 +83,10 @@ def home():
     else:
         username = request.cookies.get("username")
         if username:
-            return render_template("success.html.j2", value=username, state=True)
+            userProfile = dbUserHandler.getUserProfile(username)
+            return render_template(
+                "profile.html.j2", loginState=username, userProfile=userProfile
+            )
         else:
             return render_template("/index.html.j2")
 
@@ -86,7 +99,7 @@ def musicIndex():
 
     username = request.cookies.get("username")
     musicItems = dbMusicHandler.listAll(username)
-    return render_template("/music.html.j2", music=musicItems, state=username)
+    return render_template("/music.html.j2", music=musicItems, loginState=username)
 
 
 @app.route("/music-action.html", methods=["POST", "GET"])
@@ -120,7 +133,7 @@ def musicAction():
         else:
             msg += "[" + title + "] can not execute " + action
 
-    return render_template("/music-action.html.j2", state=username, msg=msg)
+    return render_template("/music-action.html.j2", loginState=username, msg=msg)
 
 
 @app.route("/search.html", methods=["POST", "GET"])
@@ -138,10 +151,10 @@ def musicSearch():
             "/search.html.j2",
             search_key=searchKey,
             music=musicItems,
-            state=username,
+            loginState=username,
         )
     else:
-        return render_template("/search.html.j2", state=username)
+        return render_template("/search.html.j2", loginState=username)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,42 @@
+{% extends 'layout.html.j2' %}
+{% block content %}
+<h1>Welcome {{ loginState if loginState else "Back" }}!</h1>
+{% if loginState %}
+<div class="user-profile">
+  <div class="user-like">
+    <div class="profile-title">My Like</div>
+    <ul class="profile-items">
+      {% for item in userProfile.likedSongs %}<li>{{ item }}</li>{% endfor %}
+    </ul>
+  </div>
+  <div class="user-playlist">
+    <div class="profile-title">My Play List</div>
+    <ul class="profile-items">
+      {% for item in userProfile.playList %}<li>{{ item }}</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+<br />
+<form action="/profile.html" method="post" class="box">
+  <div class="input__wrapper">
+    <input
+      style="height: 100px; vertical-align: top"
+      type="text"
+      name="feedback"
+      id="feedback"
+      placeholder="Enter your feedback here"
+      class="input__field"
+      required
+    />
+  </div>
+  <div class="input__wrapper">
+    <input type="submit" class="btn" value="Submit Feedback" />
+  </div>
+</form>
+<hr />
+<br />
+{% endif %}
+<h1>Others feedback</h1>
+{# userProfile.numOfComments #}
+<div>{% include "partials/success_feedback.html" %}</div>
+{% endblock %}

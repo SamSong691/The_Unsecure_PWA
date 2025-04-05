@@ -15,7 +15,7 @@
 </div>
 <div class="container">
   <div class="list">
-    <table class="music_list">
+    <table class="music_search_list">
       <thead>
         <tr>
           <td>Image</td>
@@ -25,7 +25,7 @@
           <td>Album</td>
           <td>Duration</td>
           <td>Genre</td>
-          {% if state %}<td>Action</td>{% endif %}
+          {% if loginState %}<td>Action</td>{% endif %}
         </tr>
       </thead>
       {% for item in music %}
@@ -39,7 +39,7 @@
         <td>{{ item.album }}</td>
         <td>{{ item.duration }}</td>
         <td>{{ item.genre }}</td>
-        {% if state %}
+        {% if loginState %}
         <td>
           <img src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}" />
           <img src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}" />
