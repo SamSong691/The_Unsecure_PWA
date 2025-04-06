@@ -3,13 +3,19 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import make_response
+from flask_wtf.csrf import CSRFProtect
+import os
 import user_management as dbUserHandler
 import music_management as dbMusicHandler
+
 
 # Code snippet for logging a message
 # app.logger.critical("message")
 
+
 app = Flask(__name__, static_url_path="/static")
+app.secret_key = os.urandom(24)
+csrf = CSRFProtect(app)
 
 
 @app.route("/profile.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])

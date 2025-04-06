@@ -2,6 +2,7 @@
 {% block content %}
 <div class="song_search clearfix">
   <form action="/search.html" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <img class="leftfix" src="/static/images/search.png" alt="" />
     <input class="leftfix input__field" type="text" name="search_key" />
     <input class="leftfix btn" type="submit" value="Search" />

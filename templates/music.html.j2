@@ -2,6 +2,7 @@
 {% block content %}
 <div class="song_search clearfix">
   <form action="/search.html" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <img class="leftfix" src="/static/images/search.png" alt="" />
     <input class="leftfix input__field" type="text" name="search_key" />
     <input class="leftfix btn" type="submit" value="Search" />
@@ -29,6 +30,7 @@
       </thead>
       {% if loginState %}
       <form action="/music-new.html">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> 
         <tr class="music_new">
           <td>
             <input type="file" name="image" style="width: 80px" />
@@ -59,6 +61,7 @@
         </tr>
       </form>
       <form id="musicActionForm" action="/music-action.html" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <input type="hidden" id="formTitle" name="title" value=""/>
       <input type="hidden" id="formAction" name="action" value=""/>
       </form>

@@ -2,6 +2,7 @@
 {% block content %}
 <h1>Login</h1>
 <form action="/index.html" method="post" class="box">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="input__wrapper">
         <input type="text" name="username" id="username" placeholder="Username" class="input__field" required/>
     </div>
