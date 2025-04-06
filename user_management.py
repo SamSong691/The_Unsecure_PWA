@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import time
 import random
+import hashlib
 
 
 def insertUser(username, password, DoB, email):
@@ -8,10 +9,15 @@ def insertUser(username, password, DoB, email):
     cur = con.cursor()
     cur.execute(
         "INSERT INTO users (username,password,dateOfBirth,email) VALUES (?,?,?,?)",
-        (username, password, DoB, email),
+        (username, encryptPassword(password), DoB, email),
     )
     con.commit()
     con.close()
+
+
+def encryptPassword(password):
+    salt = "gW#g@sY*W.3445"
+    return hashlib.md5((salt + password).encode("utf-8")).hexdigest()
 
 
 def retrieveUsers(username, password):
@@ -25,7 +31,7 @@ def retrieveUsers(username, password):
     else:
         cur.execute(
             "SELECT * FROM users WHERE username = ? and password = ?",
-            (username, password),
+            (username, encryptPassword(password)),
         )
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
