@@ -1,4 +1,5 @@
 import sqlite3 as sql
+import re
 
 
 def listAll(username):
@@ -38,7 +39,6 @@ def listAll(username):
                 inPlayList=(row[1] in playList),
             )
         )
-    print(musicList)
     return musicList
 
 
@@ -91,3 +91,36 @@ def search(username, key):
             )
         )
     return musicList
+
+
+def newRecord(data):
+    if not data["song_image_filename"]:
+        raise AssertionError("Image file upload failed")
+    if len(data["title"]) < 5 or len(data["title"]) > 50:
+        raise AssertionError("Title must be between 5 and 50 characters")
+    if len(data["artist"]) < 2 or len(data["artist"]) > 50:
+        raise AssertionError("Artist must be between 2 and 50 characters")
+    if len(data["genre"]) < 5 or len(data["genre"]) > 50:
+        raise AssertionError("Genre must be between 5 and 50 characters")
+    if len(data["album"]) < 2 or len(data["album"]) > 50:
+        raise AssertionError("Album must be between 2 and 50 characters")
+    if not re.search("[0-9]+", data["duration"]):
+        raise AssertionError("Duration must be a positive number")
+
+    con = sql.connect("database_files/database.db")
+    cur = con.cursor()
+    cur.execute(
+        "INSERT INTO musics (title,artist,genre,album,duration,song_image_filename) VALUES (?,?,?,?,?,?)",
+        (
+            data["title"],
+            data["artist"],
+            data["genre"],
+            data["album"],
+            data["duration"],
+            data["song_image_filename"],
+        ),
+    )
+    con.commit()
+    con.close()
+
+    return True

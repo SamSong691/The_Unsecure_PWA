@@ -1,20 +1,17 @@
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
-from flask import make_response
+from flask import Flask, render_template, request, redirect, make_response
+from werkzeug.utils import secure_filename
 from flask_wtf.csrf import CSRFProtect
 import os
 import user_management as dbUserHandler
 import music_management as dbMusicHandler
 
-
 # Code snippet for logging a message
 # app.logger.critical("message")
 
+UPLOAD_FOLDER = "/static/images/music"
+ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "gif"}
 
 app = Flask(__name__, static_url_path="/static")
-app.secret_key = os.urandom(24)
 csrf = CSRFProtect(app)
 
 
@@ -108,6 +105,51 @@ def musicIndex():
     return render_template("/music.html.j2", music=musicItems, loginState=username)
 
 
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def getUploadedFile(uploadedFile):
+    if uploadedFile and allowed_file(uploadedFile.filename):
+        filename = secure_filename(uploadedFile.filename)
+        uploadedFile.save(
+            os.path.join(
+                os.path.dirname(app.instance_path) + app.config["UPLOAD_FOLDER"],
+                filename,
+            )
+        )
+        return filename
+        # return os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    else:
+        return False
+
+
+@app.route("/music-new.html", methods=["POST", "GET"])
+def musicNew():
+    if request.method == "GET" and request.args.get("url"):
+        url = request.args.get("url", "")
+        return redirect(url, code=302)
+
+    username = request.cookies.get("username")
+    msg = ""
+
+    if request.method == "POST":
+        if username:
+            item = dict(
+                title=request.form["title"],
+                artist=request.form["artist"],
+                song_image_filename=getUploadedFile(request.files["image"]),
+                genre=request.form["genre"],
+                album=request.form["album"],
+                duration=request.form["duration"],
+            )
+            try:
+                dbMusicHandler.newRecord(item)
+                return render_template("/music-new.html.j2", msg="New item success!")
+            except AssertionError as e:
+                return render_template("/music-new.html.j2", msg=str(e))
+
+
 @app.route("/music-action.html", methods=["POST", "GET"])
 def musicAction():
     if request.method == "GET" and request.args.get("url"):
@@ -166,4 +208,6 @@ def musicSearch():
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+    app.config["SECRET_KEY"] = os.urandom(24)
+    app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
     app.run(debug=True, host="0.0.0.0", port=5100)

@@ -29,11 +29,11 @@
         </tr>
       </thead>
       {% if loginState %}
-      <form action="/music-new.html">
+      <form action="/music-new.html" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> 
         <tr class="music_new">
           <td>
-            <input type="file" name="image" style="width: 80px" />
+            <input type="file" name="image" accept="image/*" style="width: 80px" />
           </td>
           <td>&nbsp;</td>
           <td>
@@ -46,11 +46,7 @@
             <input type="text" name="album" placeholder="Album" />
           </td>
           <td>
-            <input
-              type="text"
-              name="duration"
-              placeholder="Duration (secondes)"
-            />
+            <input type="text" name="duration" placeholder="Duration (secondes)" />
           </td>
           <td>
             <input type="text" name="genre" placeholder="Genre" />
