@@ -17,13 +17,15 @@ def insertUser(username, password, DoB, email):
 def retrieveUsers(username, password):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"SELECT * FROM users WHERE username = '{username}'")
+    # parameterized query
+    cur.execute("SELECT * FROM users WHERE username = ?", (username,))
     if cur.fetchone() == None:
         con.close()
         return False
     else:
         cur.execute(
-            f"SELECT * FROM users WHERE username = '{username}' and password = '{password}'"
+            "SELECT * FROM users WHERE username = ? and password = ?",
+            (username, password),
         )
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
@@ -54,7 +56,7 @@ def doLogout(resp):
 def insertFeedback(feedback):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"INSERT INTO feedback (feedback) VALUES ('{feedback}')")
+    cur.execute("INSERT INTO feedback (feedback) VALUES (?)", (feedback,))
     con.commit()
     con.close()
 
@@ -75,7 +77,7 @@ def listFeedback():
 def musicAction(username, title, action):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"SELECT likedSongs,playList FROM users WHERE username = '{username}'")
+    cur.execute("SELECT likedSongs,playList FROM users WHERE username = ?", (username,))
     row = cur.fetchone()
     if row == None:
         con.close()
@@ -132,11 +134,6 @@ def musicAction(username, title, action):
         else:
             return False
 
-    # data = cur.execute("SELECT * FROM feedback").fetchall()
-    # addLike, addList
-    # document.getElementById("formTitle").setAttribute("value", title)
-    # document.getElementById("formAction").setAttribute("value", "removeLike")
-
 
 def getUserProfile(username):
     if not username:
@@ -144,7 +141,8 @@ def getUserProfile(username):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     cur.execute(
-        f"SELECT username,numOfComments,likedSongs,playList FROM users WHERE username = '{username}'"
+        "SELECT username,numOfComments,likedSongs,playList FROM users WHERE username = ?",
+        (username,),
     )
     row = cur.fetchone()
     if row == None:

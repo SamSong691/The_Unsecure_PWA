@@ -10,7 +10,8 @@ def listAll(username):
 
     if username:
         row = cur.execute(
-            f"SELECT username,likedSongs,playList FROM users WHERE username = '{username}'"
+            "SELECT username,likedSongs,playList FROM users WHERE username = ?",
+            (username,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
             likedSongs = row[1].split("\n")
@@ -61,15 +62,17 @@ def search(username, key):
 
     if username:
         row = cur.execute(
-            f"SELECT username,likedSongs,playList FROM users WHERE username = '{username}'"
+            "SELECT username,likedSongs,playList FROM users WHERE username = ?",
+            (username,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
             likedSongs = row[1].split("\n")
         if row[2] and len(row[2]) > 0:
             playList = row[2].split("\n")
-
+    searchKey = "%" + key + "%"
     data = cur.execute(
-        f"select id,title,artist,song_image_filename,genre,album,duration from musics where title like '%{key}%' or artist like '%{key}%' or genre like '%{key}%'"
+        "select id,title,artist,song_image_filename,genre,album,duration from musics where title like ? or artist like ? or genre like ?",
+        (searchKey, searchKey, searchKey),
     ).fetchall()
     con.close()
     musicList = []
