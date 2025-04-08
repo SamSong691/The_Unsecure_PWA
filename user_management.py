@@ -17,7 +17,7 @@ def insertUser(username, password, DoB, email):
 
 def encryptPassword(password):
     salt = "gW#g@sY*W.3445"
-    return hashlib.md5((salt + password).encode("utf-8")).hexdigest()
+    return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
 
 
 def retrieveUsers(username, password):
