@@ -4,7 +4,7 @@
   <form action="/search.html" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <img class="leftfix" src="/static/images/search.png" alt="" />
-    <input class="leftfix input__field" type="text" name="search_key" />
+    <input class="leftfix input__field" type="text" name="search_key" minlength="1" maxlength="50" required />
     <input class="leftfix btn" type="submit" value="Search" />
   </form>
 </div>
@@ -37,19 +37,19 @@
           </td>
           <td>&nbsp;</td>
           <td>
-            <input type="text" name="title" placeholder="Title" />
+            <input type="text" name="title" placeholder="Title" minlength="5" maxlength="50" required />
           </td>
           <td>
-            <input type="text" name="artist" placeholder="Artist" />
+            <input type="text" name="artist" placeholder="Artist" minlength="2" maxlength="50" required />
           </td>
           <td>
-            <input type="text" name="album" placeholder="Album" />
+            <input type="text" name="album" placeholder="Album" minlength="2" maxlength="50" required />
           </td>
           <td>
-            <input type="text" name="duration" placeholder="Duration (secondes)" />
+            <input type="text" name="duration" placeholder="Duration (secondes)" pattern="^[0-9]{1,5}$" required />
           </td>
           <td>
-            <input type="text" name="genre" placeholder="Genre" />
+            <input type="text" name="genre" placeholder="Genre" minlength="5" maxlength="50" required />
           </td>
           <td>
             <input type="submit" class="btn" value="New" style="margin: 0" />

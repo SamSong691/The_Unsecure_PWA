@@ -4,37 +4,15 @@
 <form action="/signup.html" method="POST" class="box">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <div class="input__wrapper">
-    <input
-      type="text"
-      name="username"
-      placeholder="Username"
-      class="input__field"
-    />
+    <input type="text" name="username" placeholder="Username" class="input__field" minlength="2" maxlength="50" required />
   </div>
   <div class="input__wrapper">
-    <input
-      type="password"
-      name="password"
-      placeholder="Password"
-      class="input__field"
-    />
+    <input type="password" name="password" placeholder="Password" class="input__field" minlength="2" maxlength="50" required />
   </div>
   <div class="input__wrapper">
-    <input
-      type="dateOfBirth"
-      name="dob"
-      placeholder="Date of Birth"
-      class="input__field"
-    />
+    <input type="dateOfBirth" name="dob" placeholder="Date of Birth (25/12/2000)" class="input__field" pattern="^[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}$" required />
     <div class="input__wrapper">
-      <input
-        type="text"
-        name="email"
-        id="email"
-        placeholder="Email"
-        class="input__field"
-        required
-      />
+      <input type="email" name="email" id="email" placeholder="Email" class="input__field" minlength="5" maxlength="50" required />
     </div>
   </div>
   <div class="input__wrapper">
