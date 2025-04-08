@@ -70,12 +70,12 @@
             alt="icon"
           />
         </td>
-        <td>{{ item.id }}</td>
-        <td>{{ item.title }}</td>
-        <td>{{ item.artist }}</td>
-        <td>{{ item.album }}</td>
-        <td>{{ item.duration }}</td>
-        <td>{{ item.genre }}</td>
+        <td>{{ item.id|safe }}</td>
+        <td>{{ item.title|safe }}</td>
+        <td>{{ item.artist|safe }}</td>
+        <td>{{ item.album|safe }}</td>
+        <td>{{ item.duration|safe }}</td>
+        <td>{{ item.genre|safe }}</td>
         {% if loginState %}
         <td>
           <img

@@ -6,13 +6,13 @@
   <div class="user-like">
     <div class="profile-title">My Like</div>
     <ul class="profile-items">
-      {% for item in userProfile.likedSongs %}<li>{{ item }}</li>{% endfor %}
+      {% for item in userProfile.likedSongs %}<li>{{ item|safe }}</li>{% endfor %}
     </ul>
   </div>
   <div class="user-playlist">
     <div class="profile-title">My Play List</div>
     <ul class="profile-items">
-      {% for item in userProfile.playList %}<li>{{ item }}</li>{% endfor %}
+      {% for item in userProfile.playList %}<li>{{ item|safe }}</li>{% endfor %}
     </ul>
   </div>
 </div>

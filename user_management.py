@@ -1,3 +1,4 @@
+from flask import session
 import sqlite3 as sql
 import time, random, hashlib, html
 
@@ -21,7 +22,7 @@ def encryptPassword(password):
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
 
 
-def retrieveUsers(username, password):
+def doLogin(username, password):
     username = html.unescape(username)
     password = html.unescape(password)
 
@@ -50,17 +51,17 @@ def retrieveUsers(username, password):
             con.close()
             return False
         else:
-            username = row[1]
             con.close()
-            return username
-
-
-def doLogin(resp, username):
-    resp.set_cookie("username", username)
+            session["loginUser"] = dict(id=row[0], name=row[1])
+            return True
 
 
 def doLogout(resp):
-    resp.set_cookie("username", "", expires=0)
+    session.pop("loginUser", default=None)
+
+
+def getLoginUser():
+    return session.get("loginUser", None)
 
 
 def insertFeedback(feedback):
@@ -84,10 +85,10 @@ def listFeedback():
     f.close()
 
 
-def musicAction(username, title, action):
+def musicAction(userId, title, action):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute("SELECT likedSongs,playList FROM users WHERE username = ?", (username,))
+    cur.execute("SELECT likedSongs,playList FROM users WHERE id = ?", (userId,))
     row = cur.fetchone()
     if row == None:
         con.close()
@@ -105,8 +106,8 @@ def musicAction(username, title, action):
             if title not in likedSongs:
                 likedSongs.append(title)
                 cur.execute(
-                    "update users set likedSongs=? where username=?",
-                    ("\n".join(likedSongs), username),
+                    "update users set likedSongs=? where id=?",
+                    ("\n".join(likedSongs), userId),
                 )
                 con.commit()
                 con.close()
@@ -115,8 +116,8 @@ def musicAction(username, title, action):
             if title in likedSongs:
                 likedSongs.remove(title)
                 cur.execute(
-                    "update users set likedSongs=? where username=?",
-                    ("\n".join(likedSongs), username),
+                    "update users set likedSongs=? where id=?",
+                    ("\n".join(likedSongs), userId),
                 )
                 con.commit()
                 con.close()
@@ -125,8 +126,8 @@ def musicAction(username, title, action):
             if title not in playList:
                 playList.append(title)
                 cur.execute(
-                    "update users set playList=? where username=?",
-                    ("\n".join(playList), username),
+                    "update users set playList=? where id=?",
+                    ("\n".join(playList), userId),
                 )
                 con.commit()
                 con.close()
@@ -135,8 +136,8 @@ def musicAction(username, title, action):
             if title in playList:
                 playList.remove(title)
                 cur.execute(
-                    "update users set playList=? where username=?",
-                    ("\n".join(playList), username),
+                    "update users set playList=? where id=?",
+                    ("\n".join(playList), userId),
                 )
                 con.commit()
                 con.close()
@@ -145,14 +146,14 @@ def musicAction(username, title, action):
             return False
 
 
-def getUserProfile(username):
-    if not username:
+def getUserProfile(userId):
+    if not userId:
         return False
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     cur.execute(
-        "SELECT username,numOfComments,likedSongs,playList FROM users WHERE username = ?",
-        (username,),
+        "SELECT username,numOfComments,likedSongs,playList FROM users WHERE id = ?",
+        (userId,),
     )
     row = cur.fetchone()
     if row == None:

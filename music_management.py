@@ -2,17 +2,17 @@ import sqlite3 as sql
 import re, html
 
 
-def listAll(username):
+def listAll(userId=None):
     likedSongs = []
     playList = []
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
 
-    if username:
+    if userId:
         row = cur.execute(
-            "SELECT username,likedSongs,playList FROM users WHERE username = ?",
-            (username,),
+            "SELECT username,likedSongs,playList FROM users WHERE id = ?",
+            (userId,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
             likedSongs = row[1].split("\n")
@@ -53,17 +53,17 @@ def secondsToStr(seconds):
         return f"{mins}:{secs}"
 
 
-def search(username, key):
+def search(key, userId=None):
     likedSongs = []
     playList = []
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
 
-    if username:
+    if userId:
         row = cur.execute(
-            "SELECT username,likedSongs,playList FROM users WHERE username = ?",
-            (username,),
+            "SELECT username,likedSongs,playList FROM users WHERE id = ?",
+            (userId,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
             likedSongs = row[1].split("\n")

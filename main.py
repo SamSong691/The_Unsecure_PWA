@@ -1,6 +1,16 @@
-from flask import Flask, render_template, request, redirect, make_response
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    make_response,
+    session,
+    url_for,
+)
 from werkzeug.utils import secure_filename
 from flask_wtf.csrf import CSRFProtect
+from flask_session import Session
+from cachelib.file import FileSystemCache
 import os
 import user_management as dbUserHandler
 import music_management as dbMusicHandler
@@ -16,25 +26,35 @@ app.config["SECRET_KEY"] = os.urandom(24)
 csrf = CSRFProtect(app)
 
 
+SESSION_TYPE = "cachelib"
+SESSION_SERIALIZATION_FORMAT = "json"
+SESSION_CACHELIB = (
+    FileSystemCache(threshold=500, cache_dir=os.path.join(app.root_path, "sessions")),
+)
+
+
 @app.route("/profile", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
-def addFeedback():
+def profile():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
-    username = request.cookies.get("username")
-    userProfile = dbUserHandler.getUserProfile(username)
+    loginUser = dbUserHandler.getLoginUser()
+    if not loginUser:
+        return redirect(url_for("home"))
+
+    userProfile = dbUserHandler.getUserProfile(loginUser["id"])
     if request.method == "POST":
         feedback = request.form["feedback"]
         dbUserHandler.insertFeedback(feedback)
         dbUserHandler.listFeedback()
         return render_template(
-            "/profile.html.j2", loginState=username, userProfile=userProfile
+            "/profile.html.j2", loginState=True, userProfile=userProfile
         )
     else:
         dbUserHandler.listFeedback()
         return render_template(
-            "/profile.html.j2", loginState=username, userProfile=userProfile
+            "/profile.html.j2", loginState=True, userProfile=userProfile
         )
 
 
@@ -70,27 +90,15 @@ def home():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        isLoggedIn = dbUserHandler.retrieveUsers(username, password)
+        isLoggedIn = dbUserHandler.doLogin(username, password)
         if isLoggedIn:
-            userProfile = dbUserHandler.getUserProfile(username)
-            dbUserHandler.listFeedback()
-
-            resp = make_response(
-                render_template(
-                    "profile.html.j2", loginState=isLoggedIn, userProfile=userProfile
-                )
-            )
-            dbUserHandler.doLogin(resp, isLoggedIn)
-            return resp
+            return redirect(url_for("profile"))
         else:
             return render_template("/index.html.j2")
     else:
-        username = request.cookies.get("username")
-        if username:
-            userProfile = dbUserHandler.getUserProfile(username)
-            return render_template(
-                "profile.html.j2", loginState=username, userProfile=userProfile
-            )
+        loginUser = dbUserHandler.getLoginUser()
+        if loginUser:
+            return redirect(url_for("profile"))
         else:
             return render_template("/index.html.j2")
 
@@ -101,9 +109,11 @@ def musicIndex():
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
-    username = request.cookies.get("username")
-    musicItems = dbMusicHandler.listAll(username)
-    return render_template("/music.html.j2", music=musicItems, loginState=username)
+    loginUser = dbUserHandler.getLoginUser()
+    musicItems = dbMusicHandler.listAll(loginUser["id"] if loginUser else None)
+    return render_template(
+        "/music.html.j2", music=musicItems, loginState=(True if loginUser else False)
+    )
 
 
 def allowed_file(filename):
@@ -131,11 +141,11 @@ def musicNew():
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
-    username = request.cookies.get("username")
+    loginUser = dbUserHandler.getLoginUser()
     msg = ""
 
     if request.method == "POST":
-        if username:
+        if loginUser:
             item = dict(
                 title=request.form["title"],
                 artist=request.form["artist"],
@@ -157,12 +167,12 @@ def musicAction():
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
-    username = request.cookies.get("username")
+    loginUser = dbUserHandler.getLoginUser()
     msg = ""
-    if username:
+    if loginUser:
         title = request.form["title"]
         action = request.form["action"]
-        result = dbUserHandler.musicAction(username, title, action)
+        result = dbUserHandler.musicAction(loginUser["id"], title, action)
 
         if action == "addLike":
             msg += "[" + title + "] like " + ("success!" if result else "fail!")
@@ -182,7 +192,7 @@ def musicAction():
         else:
             msg += "[" + title + "] can not execute " + action
 
-    return render_template("/music-action.html.j2", loginState=username, msg=msg)
+    return render_template("/music-action.html.j2", msg=msg)
 
 
 @app.route("/search", methods=["POST", "GET"])
@@ -191,23 +201,29 @@ def musicSearch():
         url = request.args.get("url", "")
         return redirect(url, code=302)
 
-    username = request.cookies.get("username")
+    loginUser = dbUserHandler.getLoginUser()
 
     if request.method == "POST":
         searchKey = request.form["search_key"]
-        musicItems = dbMusicHandler.search(username, searchKey)
+        musicItems = dbMusicHandler.search(
+            searchKey, loginUser["id"] if loginUser else None
+        )
         return render_template(
             "/search.html.j2",
             search_key=searchKey,
             music=musicItems,
-            loginState=username,
+            loginState=(True if loginUser else False),
         )
     else:
-        return render_template("/search.html.j2", loginState=username)
+        return render_template(
+            "/search.html.j2", loginState=(True if loginUser else False)
+        )
 
 
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+    app.config.from_object(__name__)
+    Session(app)
     app.run(debug=True, host="0.0.0.0", port=5100)
