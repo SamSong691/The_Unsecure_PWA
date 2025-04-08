@@ -1,10 +1,11 @@
 import sqlite3 as sql
-import time
-import random
-import hashlib
+import time, random, hashlib, html
 
 
 def insertUser(username, password, DoB, email):
+    username = html.escape(username, True)
+    password = html.escape(password, True)
+
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     cur.execute(
@@ -21,6 +22,9 @@ def encryptPassword(password):
 
 
 def retrieveUsers(username, password):
+    username = html.unescape(username)
+    password = html.unescape(password)
+
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     # parameterized query

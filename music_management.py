@@ -1,5 +1,5 @@
 import sqlite3 as sql
-import re
+import re, html
 
 
 def listAll(username):
@@ -29,11 +29,11 @@ def listAll(username):
         musicList.append(
             dict(
                 id=row[0],
-                title=row[1],
-                artist=row[2],
+                title=html.unescape(row[1]),
+                artist=html.unescape(row[2]),
                 song_image_filename=row[3],
-                genre=row[4],
-                album=row[5],
+                genre=html.unescape(row[4]),
+                album=html.unescape(row[5]),
                 duration=secondsToStr(row[6]),
                 isLiked=(row[1] in likedSongs),
                 inPlayList=(row[1] in playList),
@@ -80,11 +80,11 @@ def search(username, key):
         musicList.append(
             dict(
                 id=row[0],
-                title=row[1],
-                artist=row[2],
+                title=html.unescape(row[1]),
+                artist=html.unescape(row[2]),
                 song_image_filename=row[3],
-                genre=row[4],
-                album=row[5],
+                genre=html.unescape(row[4]),
+                album=html.unescape(row[5]),
                 duration=secondsToStr(row[6]),
                 isLiked=(row[1] in likedSongs),
                 inPlayList=(row[1] in playList),
@@ -106,6 +106,11 @@ def newRecord(data):
         raise AssertionError("Album must be between 2 and 50 characters")
     if not re.search("[0-9]+", data["duration"]):
         raise AssertionError("Duration must be a positive number")
+
+    title = html.escape(title, True)
+    artist = html.escape(artist, True)
+    genre = html.escape(genre, True)
+    album = html.escape(album, True)
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
