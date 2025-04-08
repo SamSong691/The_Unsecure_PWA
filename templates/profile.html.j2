@@ -1,6 +1,6 @@
 {% extends 'layout.html.j2' %}
 {% block content %}
-<h1>Welcome {{ loginState if loginState else "Back" }}!</h1>
+<h1>Welcome {{ loginUser.name if loginState else "Back" }}!</h1>
 {% if loginState %}
 <div class="user-profile">
   <div class="user-like">
