@@ -1,7 +1,7 @@
 {% extends 'layout.html.j2' %}
 {% block content %}
 <div class="song_search clearfix">
-  <form action="/search.html" method="post">
+  <form action="/search" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <img class="leftfix" src="/static/images/search.png" alt="" />
     <input class="leftfix input__field" type="text" name="search_key" minlength="1" maxlength="50" required />

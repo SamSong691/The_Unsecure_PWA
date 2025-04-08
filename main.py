@@ -16,7 +16,7 @@ app.config["SECRET_KEY"] = os.urandom(24)
 csrf = CSRFProtect(app)
 
 
-@app.route("/profile.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/profile", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def addFeedback():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -38,7 +38,7 @@ def addFeedback():
         )
 
 
-@app.route("/signup.html", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
+@app.route("/signup", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def signup():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -54,14 +54,14 @@ def signup():
         return render_template("/signup.html.j2")
 
 
-@app.route("/logout.html", methods=["GET"])
+@app.route("/logout", methods=["GET"])
 def logout():
     resp = make_response(render_template("logout.html.j2"))
     dbUserHandler.doLogout(resp)
     return resp
 
 
-@app.route("/index.html", methods=["POST", "GET"])
+@app.route("/index", methods=["POST", "GET"])
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "GET" and request.args.get("url"):
@@ -95,7 +95,7 @@ def home():
             return render_template("/index.html.j2")
 
 
-@app.route("/music.html", methods=["POST", "GET"])
+@app.route("/music", methods=["POST", "GET"])
 def musicIndex():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -125,7 +125,7 @@ def getUploadedFile(uploadedFile):
         return False
 
 
-@app.route("/music-new.html", methods=["POST", "GET"])
+@app.route("/music-new", methods=["POST", "GET"])
 def musicNew():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -151,7 +151,7 @@ def musicNew():
                 return render_template("/music-new.html.j2", msg=str(e))
 
 
-@app.route("/music-action.html", methods=["POST", "GET"])
+@app.route("/music-action", methods=["POST", "GET"])
 def musicAction():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
@@ -185,7 +185,7 @@ def musicAction():
     return render_template("/music-action.html.j2", loginState=username, msg=msg)
 
 
-@app.route("/search.html", methods=["POST", "GET"])
+@app.route("/search", methods=["POST", "GET"])
 def musicSearch():
     if request.method == "GET" and request.args.get("url"):
         url = request.args.get("url", "")
