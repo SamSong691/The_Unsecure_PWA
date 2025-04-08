@@ -15,9 +15,9 @@ def listAll(userId=None):
             (userId,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
-            likedSongs = row[1].split("\n")
+            likedSongs = [int(x) for x in row[1].split(",")]
         if row[2] and len(row[2]) > 0:
-            playList = row[2].split("\n")
+            playList = [int(x) for x in row[2].split(",")]
 
     data = cur.execute(
         "select id,title,artist,song_image_filename,genre,album,duration from musics order by id desc"
@@ -35,11 +35,33 @@ def listAll(userId=None):
                 genre=html.unescape(row[4]),
                 album=html.unescape(row[5]),
                 duration=secondsToStr(row[6]),
-                isLiked=(row[1] in likedSongs),
-                inPlayList=(row[1] in playList),
+                isLiked=(row[0] in likedSongs),
+                inPlayList=(row[0] in playList),
             )
         )
     return musicList
+
+
+def listAllByIds(ids):
+    list = []
+
+    con = sql.connect("database_files/database.db")
+    cur = con.cursor()
+    print(",".join(str(x) for x in ids))
+    data = cur.execute(
+        "select id,title from musics where id in ("
+        + ",".join(str(x) for x in ids)
+        + ")"
+    ).fetchall()
+    for row in data:
+        list.append(
+            dict(
+                id=row[0],
+                title=html.unescape(row[1]),
+            )
+        )
+
+    return list
 
 
 def secondsToStr(seconds):
@@ -66,9 +88,9 @@ def search(key, userId=None):
             (userId,),
         ).fetchone()
         if row[1] and len(row[1]) > 0:
-            likedSongs = row[1].split("\n")
+            likedSongs = [int(x) for x in row[1].split(",")]
         if row[2] and len(row[2]) > 0:
-            playList = row[2].split("\n")
+            playList = [int(x) for x in row[2].split(",")]
     searchKey = "%" + key + "%"
     data = cur.execute(
         "select id,title,artist,song_image_filename,genre,album,duration from musics where title like ? or artist like ? or genre like ?",
@@ -86,8 +108,8 @@ def search(key, userId=None):
                 genre=html.unescape(row[4]),
                 album=html.unescape(row[5]),
                 duration=secondsToStr(row[6]),
-                isLiked=(row[1] in likedSongs),
-                inPlayList=(row[1] in playList),
+                isLiked=(row[0] in likedSongs),
+                inPlayList=(row[0] in playList),
             )
         )
     return musicList

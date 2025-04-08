@@ -58,7 +58,7 @@
       </form>
       <form id="musicActionForm" action="/music-action" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      <input type="hidden" id="formTitle" name="title" value=""/>
+      <input type="hidden" id="formId" name="id" value=""/>
       <input type="hidden" id="formAction" name="action" value=""/>
       </form>
       {% endif %}
@@ -70,7 +70,7 @@
             alt="icon"
           />
         </td>
-        <td>{{ item.id|safe }}</td>
+        <td>{{ item.id }}</td>
         <td>{{ item.title|safe }}</td>
         <td>{{ item.artist|safe }}</td>
         <td>{{ item.album|safe }}</td>
@@ -80,11 +80,11 @@
         <td>
           <img
             src="/static/icons/{% if item.isLiked %}like-added.png{% else %}like.png{% endif %}"
-            onclick="{% if item.isLiked %}removeLike('{{ item.title }}');{% else %}addLike('{{ item.title }}');{% endif %}"
+            onclick="{% if item.isLiked %}removeLike('{{ item.id }}');{% else %}addLike('{{ item.id }}');{% endif %}"
           />
           <img
             src="/static/icons/{% if item.inPlayList %}playlist-added.png{% else %}playlist.png{% endif %}"
-            onclick="{% if item.inPlayList %}removeList('{{ item.title }}');{% else %}addList('{{ item.title }}');{% endif %}"
+            onclick="{% if item.inPlayList %}removeList('{{ item.id }}');{% else %}addList('{{ item.id }}');{% endif %}"
           />
         </td>
         {% endif %}

@@ -7,26 +7,26 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-function removeLike(title) {
-  document.getElementById("formTitle").setAttribute("value", title);
+function removeLike(id) {
+  document.getElementById("formId").setAttribute("value", id);
   document.getElementById("formAction").setAttribute("value", "removeLike");
   document.getElementById("musicActionForm").submit();
 }
 
-function addLike(title) {
-  document.getElementById("formTitle").setAttribute("value", title);
+function addLike(id) {
+  document.getElementById("formId").setAttribute("value", id);
   document.getElementById("formAction").setAttribute("value", "addLike");
   document.getElementById("musicActionForm").submit();
 }
 
-function removeList(title) {
-  document.getElementById("formTitle").setAttribute("value", title);
+function removeList(id) {
+  document.getElementById("formId").setAttribute("value", id);
   document.getElementById("formAction").setAttribute("value", "removeList");
   document.getElementById("musicActionForm").submit();
 }
 
-function addList(title) {
-  document.getElementById("formTitle").setAttribute("value", title);
+function addList(id) {
+  document.getElementById("formId").setAttribute("value", id);
   document.getElementById("formAction").setAttribute("value", "addList");
   document.getElementById("musicActionForm").submit();
 }

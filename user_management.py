@@ -85,7 +85,8 @@ def listFeedback():
     f.close()
 
 
-def musicAction(userId, title, action):
+def musicAction(userId, songId, action):
+    songId = int(songId)
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
     cur.execute("SELECT likedSongs,playList FROM users WHERE id = ?", (userId,))
@@ -98,46 +99,46 @@ def musicAction(userId, title, action):
         playList = []
 
         if row[0] and len(row[0]) > 0:
-            likedSongs = row[0].split("\n")
+            likedSongs = [int(x) for x in row[0].split(",")]
         if row[1] and len(row[1]) > 0:
-            playList = row[1].split("\n")
+            playList = [int(x) for x in row[1].split(",")]
 
         if action == "addLike":
-            if title not in likedSongs:
-                likedSongs.append(title)
+            if songId not in likedSongs:
+                likedSongs.append(songId)
                 cur.execute(
                     "update users set likedSongs=? where id=?",
-                    ("\n".join(likedSongs), userId),
+                    (",".join(str(x) for x in likedSongs), userId),
                 )
                 con.commit()
                 con.close()
             return True
         elif action == "removeLike":
-            if title in likedSongs:
-                likedSongs.remove(title)
+            if songId in likedSongs:
+                likedSongs.remove(songId)
                 cur.execute(
                     "update users set likedSongs=? where id=?",
-                    ("\n".join(likedSongs), userId),
+                    (",".join(str(x) for x in likedSongs), userId),
                 )
                 con.commit()
                 con.close()
             return True
         elif action == "addList":
-            if title not in playList:
-                playList.append(title)
+            if songId not in playList:
+                playList.append(songId)
                 cur.execute(
                     "update users set playList=? where id=?",
-                    ("\n".join(playList), userId),
+                    (",".join(str(x) for x in playList), userId),
                 )
                 con.commit()
                 con.close()
             return True
         elif action == "removeList":
-            if title in playList:
-                playList.remove(title)
+            if songId in playList:
+                playList.remove(songId)
                 cur.execute(
                     "update users set playList=? where id=?",
-                    ("\n".join(playList), userId),
+                    (",".join(str(x) for x in playList), userId),
                 )
                 con.commit()
                 con.close()
@@ -165,9 +166,9 @@ def getUserProfile(userId):
         likedSongs = []
         playList = []
         if row[2] and len(row[2]) > 0:
-            likedSongs = row[2].split("\n")
+            likedSongs = [int(x) for x in row[2].split(",")]
         if row[3] and len(row[3]) > 0:
-            playList = row[3].split("\n")
+            playList = [int(x) for x in row[3].split(",")]
 
         con.close()
         return dict(

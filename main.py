@@ -44,17 +44,25 @@ def profile():
         return redirect(url_for("home"))
 
     userProfile = dbUserHandler.getUserProfile(loginUser["id"])
+    likedSongs = dbMusicHandler.listAllByIds(userProfile["likedSongs"])
+    playList = dbMusicHandler.listAllByIds(userProfile["playList"])
     if request.method == "POST":
         feedback = request.form["feedback"]
         dbUserHandler.insertFeedback(feedback)
         dbUserHandler.listFeedback()
         return render_template(
-            "/profile.html.j2", loginState=True, userProfile=userProfile
+            "/profile.html.j2",
+            loginState=True,
+            likedSongs=likedSongs,
+            playList=playList,
         )
     else:
         dbUserHandler.listFeedback()
         return render_template(
-            "/profile.html.j2", loginState=True, userProfile=userProfile
+            "/profile.html.j2",
+            loginState=True,
+            likedSongs=likedSongs,
+            playList=playList,
         )
 
 
@@ -170,27 +178,27 @@ def musicAction():
     loginUser = dbUserHandler.getLoginUser()
     msg = ""
     if loginUser:
-        title = request.form["title"]
+        songId = request.form["id"]
         action = request.form["action"]
-        result = dbUserHandler.musicAction(loginUser["id"], title, action)
+        result = dbUserHandler.musicAction(loginUser["id"], songId, action)
 
         if action == "addLike":
-            msg += "[" + title + "] like " + ("success!" if result else "fail!")
+            msg += "[" + songId + "] like " + ("success!" if result else "fail!")
         elif action == "removeLike":
-            msg += "[" + title + "] unlike " + ("success!" if result else "fail!")
+            msg += "[" + songId + "] unlike " + ("success!" if result else "fail!")
         elif action == "addList":
             msg += (
-                "[" + title + "] add into list " + ("success!" if result else "fail!")
+                "[" + songId + "] add into list " + ("success!" if result else "fail!")
             )
         elif action == "removeList":
             msg += (
                 "["
-                + title
+                + songId
                 + "] remove from list "
                 + ("success!" if result else "fail!")
             )
         else:
-            msg += "[" + title + "] can not execute " + action
+            msg += "[" + songId + "] can not execute " + action
 
     return render_template("/music-action.html.j2", msg=msg)
 
