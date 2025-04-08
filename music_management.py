@@ -47,7 +47,6 @@ def listAllByIds(ids):
 
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    print(",".join(str(x) for x in ids))
     data = cur.execute(
         "select id,title from musics where id in ("
         + ",".join(str(x) for x in ids)

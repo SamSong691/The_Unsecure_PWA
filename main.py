@@ -53,6 +53,7 @@ def profile():
         return render_template(
             "/profile.html.j2",
             loginState=True,
+            loginUser=loginUser,
             likedSongs=likedSongs,
             playList=playList,
         )
@@ -61,6 +62,7 @@ def profile():
         return render_template(
             "/profile.html.j2",
             loginState=True,
+            loginUser=loginUser,
             likedSongs=likedSongs,
             playList=playList,
         )
