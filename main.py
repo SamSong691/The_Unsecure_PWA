@@ -12,6 +12,7 @@ UPLOAD_FOLDER = "/static/images/music"
 ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "gif"}
 
 app = Flask(__name__, static_url_path="/static")
+app.config["SECRET_KEY"] = os.urandom(24)
 csrf = CSRFProtect(app)
 
 
@@ -208,6 +209,5 @@ def musicSearch():
 if __name__ == "__main__":
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
-    app.config["SECRET_KEY"] = os.urandom(24)
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
     app.run(debug=True, host="0.0.0.0", port=5100)
