@@ -1,0 +1,16 @@
+{% extends 'layout.html.j2' %}
+{% block content %}
+<h1>Login</h1>
+{% if msg %}
+<div><span>{{ msg }}</span></div>
+{% endif %}
+<form action="/vcode" method="post" class="box">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class="input__wrapper">
+        <input type="text" name="code" id="code" placeholder="Please input code(123456 for debug)" class="input__field" minlength="6" maxlength="6" required />
+    </div>
+    <div class="input__wrapper">
+        <input type="submit" class="btn" value="Log In" />
+    </div>
+</form>
+{% endblock %}
