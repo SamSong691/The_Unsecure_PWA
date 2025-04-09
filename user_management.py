@@ -1,6 +1,6 @@
 from flask import session
 import sqlite3 as sql
-import time, random, hashlib, html
+import time, random, hashlib, html, string
 
 
 def insertUser(username, password, DoB, email):
@@ -52,7 +52,9 @@ def doLogin(username, password):
             return False
         else:
             con.close()
-            session["loginUser"] = dict(id=row[0], name=row[1])
+            session["loginUser"] = dict(
+                id=row[0], name=row[1], status="AUTH_CODE", code=generateCode()
+            )
             return True
 
 
@@ -177,3 +179,21 @@ def getUserProfile(userId):
             likedSongs=likedSongs,
             playList=playList,
         )
+
+
+def generateCode(length=6):
+    letters = string.digits
+    result_str = "".join(random.choice(letters) for i in range(length))
+    return result_str
+
+
+def verifyCode(code):
+    loginUser = getLoginUser()
+    if loginUser["status"] == "OK":
+        session["loginUser"] = dict(
+            id=loginUser["id"], name=loginUser["name"], status="OK"
+        )
+        return True
+    if loginUser["status"] == "AUTH_CODE" and loginUser["code"] == code:
+        return True
+    return False

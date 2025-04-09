@@ -33,6 +33,20 @@ SESSION_CACHELIB = (
 )
 
 
+@app.route("/vcode", methods=["POST", "GET"])
+def vcode():
+    if request.method == "GET" and request.args.get("url"):
+        url = request.args.get("url", "")
+        return redirect(url, code=302)
+    if request.method == "POST":
+        if dbUserHandler.verifyCode(request.form["code"]):
+            return redirect(url_for("profile"))
+        else:
+            return render_template("/vcode.html.j2", msg="Wrong code!")
+    else:
+        return render_template("/vcode.html.j2")
+
+
 @app.route("/profile", methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
 def profile():
     if request.method == "GET" and request.args.get("url"):
@@ -102,7 +116,7 @@ def home():
         password = request.form["password"]
         isLoggedIn = dbUserHandler.doLogin(username, password)
         if isLoggedIn:
-            return redirect(url_for("profile"))
+            return redirect(url_for("vcode"))
         else:
             return render_template("/index.html.j2")
     else:
