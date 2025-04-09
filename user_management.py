@@ -182,9 +182,11 @@ def getUserProfile(userId):
 
 
 def generateCode(length=6):
-    letters = string.digits
-    result_str = "".join(random.choice(letters) for i in range(length))
-    return result_str
+    # letters = string.digits
+    # result_str = "".join(random.choice(letters) for i in range(length))
+    # return result_str
+    # for debug
+    return "123456"
 
 
 def verifyCode(code):
